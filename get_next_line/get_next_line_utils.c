@@ -11,19 +11,55 @@
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-#include  <unistd.h>
 
-char	*read_fd(int fd, char *cache_ptr)
+int	ft_findchr(char *str, int c)
 {
-	int		bytes_read;
-	char	line[BUFFER_SIZE + 1];
-	char	*ptr;
+	int index;
 
-	bytes_read = read(fd, line, BUFFER_SIZE);
-	ptr = line;
-	if (bytes_read < 0)
+	index = 0;
+	while (*str)
+	{
+		if (*str == c)
+			return (index);
+		index++;
+	}
+	return (0);
+}
+
+int	ft_strlen(char *str, int find_ln)
+{
+	int counter;
+
+	counter = 0;
+	while (*str)
+	{
+		if (find_ln && *str == '\n')
+		{
+			counter++;
+			break ;
+		}
+		counter++;
+		str++;
+	}
+	return (counter);
+}
+
+char	*ft_strjoin(char *cache, char *buffer)
+{
+	char	*result;
+	int		index;
+
+	if (!cache)
+		result = (char *)malloc(sizeof(*result) * (ft_strlen(buffer, 0) + 1));
+	else
+		result = (char *)malloc(sizeof(*result) * (ft_strlen(buffer, 0) + ft_strlen(cache, 0) + 1));
+	if (!result)
 		return (NULL);
-	while (*ptr++)
-	line[bytes_read] = '\0';
-	return (ptr);
+	index = 0;
+	while (cache && *cache)
+		result[index++] = *(cache++);
+	while (buffer && *buffer)
+		result[index++] = *(buffer++);
+	result[index] = '\0';
+	return (result);
 }

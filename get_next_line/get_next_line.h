@@ -17,6 +17,9 @@
 # define BUFFER_SIZE 1
 # endif
 
+#include <unistd.h>
+#include <stdlib.h>
+
 // char	*read_fd(int fd, char *cache_ptr);
 char	*get_next_line(int fd);
 

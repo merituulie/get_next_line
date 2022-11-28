@@ -11,115 +11,79 @@
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-#include <stdio.h>
 #include <unistd.h>
 #include <fcntl.h>
 #include <stdlib.h>
 
-size_t	ft_strlen(const char *s)
+char	*read_fd(int fd, char *cache)
 {
-	size_t	counter;
+	char	*buffer;
+	int		bytes;
 
-	counter = 0;
-	while (*s++ != '\0' || *s++ != '\n')
-		counter++;
-	return (counter);
-}
-
-char	*ft_strjoin(char const *s1, char const *s2)
-{
-	char	*str;
-	int		index;
-
-	index = 0;
-	if (!s1 || !s2)
+	buffer = (char *)malloc(sizeof(*buffer) * (BUFFER_SIZE + 1));
+	if (!buffer)
 		return (NULL);
-	str = (char *)malloc(sizeof(char) * ft_strlen(s1) + ft_strlen(s2) + 1);
-	if (!str)
-		return (NULL);
-	while (*s1 != '\0')
-		str[index++] = *(s1++);
-	while (*s2 != '\0')
-		str[index++] = *(s2++);
-	str[index] = '\0';
-	return (str);
-}
-
-void	*ft_memcpy(void *dst, const void *src, size_t n)
-{
-	char	*str;
-	char	*dest;
-
-	str = (char *)src;
-	dest = (char *)dst;
-	if (!str && !dest && n > 0)
-		return (NULL);
-	while (n-- > 0)
-		*(dest++) = *(str++);
-	dest = NULL;
-	str = NULL;
-	return (dst);
-}
-
-char	*ft_strdup(const char *s)
-{
-	char	*new;
-	int		len;
-
-	len = ft_strlen(s);
-	new = (char *)malloc(sizeof(*new) * len + 1);
-	if (!new)
-		return (NULL);
-	ft_memcpy(new, s, len + 1);
-	return (new);
-}
-
-char	*ft_strchr(const char *s, int a)
-{
-	unsigned char	*ptr;
-
-	ptr = (unsigned char *)s;
-	while (*ptr++ != (unsigned char)a)
+	bytes = 1;
+	while (bytes > 0)
 	{
-		if (*ptr == a)
-			return ((char *)ptr);
+		bytes = read(fd, buffer, O_RDONLY);
+		if (bytes == -1)
+			return (NULL);
+		buffer[bytes] = '\0';
+		cache = ft_strjoin(cache, buffer);
+		if (!cache)
+		{
+			free(buffer);
+			return (NULL);
+		}
+		if (ft_findchr(cache, '\n') > 0)
+			break ;
 	}
-	ptr = NULL;
-	return (NULL);
+	free(buffer);
+	return (cache);
 }
 
-char *ft_trim(char *trimmable)
+char	*parse_next_line(char *cache)
 {
-	char	*trimmed;
+	char	*line;
 	int		index;
 
 	index = 0;
-	trimmed = (char *)malloc(sizeof(*trimmed) * (ft_strlen(trimmable) + 1));
-	while (*trimmable++ != '\n')
-		trimmed[index] = *trimmable;
-	return (trimmed);
+	line = (char *)malloc(sizeof(*line) * ft_strlen(cache, 1) + 1);
+	while (cache && *cache)
+		line[index++] = *(cache++);
+	line[index] = '\0';
+	cache = NULL;
+	return (line);
+}
+
+char	*trim_cache(char *cache)
+{
+	char	*temp;
+
+	while (cache && *cache && *cache != '\n')
+		cache++;
+	temp = ++cache;
+	free(cache);
+	return (temp);
 }
 
 char	*get_next_line(int fd)
 {
 	static char	*cache;
-	char		current[BUFFER_SIZE + 1];
-	int			bytes_read;
-	char		*next_linebreak;
-	char		*temp;
+	char		*line;
 
-	bytes_read = 1;
-	bytes_read = read(fd, current, BUFFER_SIZE);
-	while (bytes_read > 0)
+	if (fd < 0 || BUFFER_SIZE <= 0 || read(0, 0, O_RDONLY))
+		return (NULL);
+	cache = read_fd(fd, cache);
+	line = parse_next_line(cache);
+	if (!line)
 	{
-		if (next_linebreak = ft_strchr(current, '\n'))
-		{
-			cache = ft_strdup(next_linebreak);
-			return (ft_trim(current));
-		}
-		bytes_read = read(fd, current, BUFFER_SIZE);
+		free(cache);
+		return (NULL);
 	}
-	return (temp);
+	cache = trim_cache(cache);
+	return (line);
 }
 
 int main()
