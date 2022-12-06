@@ -1,31 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.h                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.h                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: meskelin <meskelin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/18 14:02:07 by meskelin          #+#    #+#             */
-/*   Updated: 2022/12/02 17:20:02 by meskelin         ###   ########.fr       */
+/*   Updated: 2022/12/05 18:36:21 by meskelin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef GET_NEXT_LINE_H
-# define GET_NEXT_LINE_H
+#ifndef GET_NEXT_LINE_BONUS_H
+# define GET_NEXT_LINE_BONUS_H
 
-#include <unistd.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <fcntl.h>
+# include <unistd.h>
+# include <stdlib.h>
 
 # ifndef BUFFER_SIZE
-# define BUFFER_SIZE 1
+#  define BUFFER_SIZE 1
 # endif
 
-char	*ft_strjoin(char *s1, char *s2);
-size_t	ft_strlen(const char *s, int find_nl);
-char	*ft_strchr(const char *s, int c);
-void	*ft_calloc(size_t count, size_t size);
+# ifndef FD_COUNT
+#  define FD_COUNT 10
+# endif
+
+size_t	ft_strlen(char *str);
+int		ft_findchr(char *str, char c);
+char	*ft_strjoin_free(char *cache, char *buffer);
+char	*ft_init_str(void);
 char	*get_next_line(int fd);
 
 #endif
