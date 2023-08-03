@@ -6,7 +6,7 @@
 /*   By: meskelin <meskelin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/18 14:01:45 by meskelin          #+#    #+#             */
-/*   Updated: 2022/12/05 19:01:51 by meskelin         ###   ########.fr       */
+/*   Updated: 2022/12/06 13:50:53 by meskelin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,9 +43,11 @@ char	*ft_strjoin_free(char *cache, char *buffer)
 	int		index_c;
 	size_t	len;
 
+	if (!cache || !buffer)
+		return (NULL);
 	len = (ft_strlen(cache) + ft_strlen(buffer));
 	result = (char *)malloc(sizeof(char) * (len + 1));
-	if (!result || !cache || !buffer)
+	if (!result)
 		return (NULL);
 	index_r = 0;
 	index_c = 0;
